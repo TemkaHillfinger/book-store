@@ -21,12 +21,12 @@ public class SpringBootBookStoreApplication {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            Book book1984 = new Book();
-            book1984.setTitle("1984");
-            book1984.setAuthor("George Orwell");
-            book1984.setIsbn("2-266-11156-7");
-            book1984.setPrice(BigDecimal.valueOf(100));
-            bookService.save(book1984);
+            Book theLordOfTheRings = new Book();
+            theLordOfTheRings.setTitle("The Lord of the Rings ");
+            theLordOfTheRings.setAuthor("John Ronald Reuel Tolkien");
+            theLordOfTheRings.setIsbn("978-88-452-9261-3");
+            theLordOfTheRings.setPrice(BigDecimal.valueOf(600));
+            bookService.save(theLordOfTheRings);
             System.out.println(bookService.findAll());
         };
     }
