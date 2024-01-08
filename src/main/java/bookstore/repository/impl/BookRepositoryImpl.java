@@ -1,25 +1,24 @@
 package bookstore.repository.impl;
 
+import bookstore.exeption.EntityNotFoundException;
 import bookstore.model.Book;
 import bookstore.repository.BookRepository;
 import java.util.List;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
+@RequiredArgsConstructor
 @Repository
 public class BookRepositoryImpl implements BookRepository {
     private final SessionFactory sessionFactory;
 
-    @Autowired
-    public BookRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
     @Override
-    public Book save(Book book) {
+    public Book createBook(Book book) {
         Session session = null;
         Transaction transaction = null;
         try {
@@ -46,6 +45,17 @@ public class BookRepositoryImpl implements BookRepository {
             return session.createQuery("FROM Book", Book.class).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can`t get list of books from DB", e);
+        }
+    }
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Book> bookQueue = session.createQuery("FROM Book b WHERE b.id = :id", Book.class);
+            bookQueue.setParameter("id", id);
+            return Optional.ofNullable(bookQueue.getSingleResult());
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Can`t find book by id" + id, e);
         }
     }
 }
