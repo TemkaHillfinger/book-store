@@ -1,12 +1,13 @@
 package bookstore.repository.book;
 
+import bookstore.model.Book;
 import bookstore.repository.spec.SpecificationProvider;
 import java.util.Arrays;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PriceSpecificationProvider implements SpecificationProvider {
+public class PriceSpecificationProvider implements SpecificationProvider<Book> {
     private static final String PRICE = "price";
 
     @Override
