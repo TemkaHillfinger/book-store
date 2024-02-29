@@ -1,4 +1,4 @@
-package bookstore.service;
+package bookstore.service.book;
 
 import bookstore.dto.BookDto;
 import bookstore.dto.BookSearchParameters;
