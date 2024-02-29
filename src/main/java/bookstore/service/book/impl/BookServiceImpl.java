@@ -1,4 +1,4 @@
-package bookstore.service.impl;
+package bookstore.service.book.impl;
 
 import bookstore.dto.BookDto;
 import bookstore.dto.BookSearchParameters;
@@ -8,7 +8,7 @@ import bookstore.mapper.BookMapper;
 import bookstore.model.Book;
 import bookstore.repository.book.BookRepository;
 import bookstore.repository.book.BookSpecificationBuilder;
-import bookstore.service.BookService;
+import bookstore.service.book.BookService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
