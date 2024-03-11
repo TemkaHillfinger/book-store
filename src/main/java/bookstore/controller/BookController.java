@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
     private final BookService bookService;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping
     @Operation(summary = "Get all books", description = "Get all books")
     public List<BookDto> getAll(Pageable pageable) {
@@ -64,7 +63,6 @@ public class BookController {
         return bookService.updateBook(bookDto, id);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/search")
     @Operation(summary = "Search for a book", description = "Search for a book")
     public List<BookDto> search(BookSearchParameters bookSearchParameters) {
