@@ -1,7 +1,6 @@
 package bookstore.service.book.impl;
 
 import bookstore.dto.BookDto;
-//import bookstore.dto.BookDtoWithoutCategoryIds;
 import bookstore.dto.BookDtoWithoutCategoryIds;
 import bookstore.dto.BookSearchParameters;
 import bookstore.dto.CreateBookRequestDto;
@@ -77,5 +76,4 @@ public class BookServiceImpl implements BookService {
                 .map(bookMapper::toDtoWithoutCategories)
                 .toList();
     }
-
 }

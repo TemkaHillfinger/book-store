@@ -27,7 +27,6 @@ public interface BookMapper {
         List<Long> ids = book.getCategories().stream()
                 .map(Category::getId)
                 .toList();
-        bookDto.setCategoriesIds(ids);
+        bookDto.setCategoryIds(ids);
     }
-
 }
