@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private JwyUtil jwyUtil;
+    private JwtUtil jwtUtil;
     private UserDetailsService userDetailsService;
 
     @Override
@@ -26,8 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
         String token = getToken(request);
-        if (token != null && jwyUtil.isValidToken(token)) {
-            String userName = jwyUtil.getUserName(token);
+        if (token != null && jwtUtil.isValidToken(token)) {
+            String userName = jwtUtil.getUserName(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
