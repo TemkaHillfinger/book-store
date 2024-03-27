@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,25 +38,25 @@ public class CategoryController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping
+    @GetMapping("/{id}")
     public CategoryDto getCategoryById(Long id) {
         return categoryService.getById(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @PutMapping("/{id}")
     public CategoryDto updateCategory(Long id, CreateCategoryRequestDto requestDto) {
         return categoryService.update(id,requestDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @DeleteMapping("/{id}")
     void deleteCategory(Long id) {
         categoryService.deleteById(id);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public List<BookDtoWithoutCategoryIds> getBookByCategoryId(Long id) {
         return bookService.findAllByCategoryId(id);

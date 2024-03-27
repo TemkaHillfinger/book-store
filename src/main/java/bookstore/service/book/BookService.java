@@ -1,7 +1,6 @@
 package bookstore.service.book;
 
 import bookstore.dto.BookDto;
-//import bookstore.dto.BookDtoWithoutCategoryIds;
 import bookstore.dto.BookDtoWithoutCategoryIds;
 import bookstore.dto.BookSearchParameters;
 import bookstore.dto.CreateBookRequestDto;
