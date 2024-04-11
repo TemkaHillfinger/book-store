@@ -4,10 +4,9 @@ import bookstore.dto.cart.AddToCartRequest;
 import bookstore.dto.cart.ShoppingCartDto;
 import bookstore.dto.cartitem.UpdateCartItemRequest;
 import bookstore.model.User;
-import org.springframework.data.domain.Pageable;
 
 public interface ShoppingCartService {
-    ShoppingCartDto findUserShoppingCart(User user, Pageable pageable);
+    ShoppingCartDto findUserShoppingCart(Long userId);
 
     ShoppingCartDto addBookToCart(AddToCartRequest request, User user);
 

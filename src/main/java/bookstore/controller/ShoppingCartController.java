@@ -5,9 +5,9 @@ import bookstore.dto.cart.ShoppingCartDto;
 import bookstore.dto.cartitem.UpdateCartItemRequest;
 import bookstore.model.User;
 import bookstore.service.cart.ShoppingCartService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,13 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
-    @GetMapping()
-    public ShoppingCartDto getShoppingCart(Authentication authentication, Pageable pageable) {
+    @GetMapping
+    @Operation(summary = "Get shoppingCart", description = "Get shoppingCart")
+    public ShoppingCartDto getShoppingCart(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return shoppingCartService.findUserShoppingCart(user, pageable);
+        return shoppingCartService.findUserShoppingCart(user.getId());
     }
 
     @PostMapping
+    @Operation(summary = "Add book", description = "Add book to the shopping cart")
     public ShoppingCartDto addBookToShoppingCart(@RequestBody @Valid AddToCartRequest request,
                                                  Authentication authentication) {
         User user = (User) authentication.getPrincipal();
@@ -40,12 +42,15 @@ public class ShoppingCartController {
     }
 
     @PutMapping("cart-items/{cartItemId}")
+    @Operation(summary = "Update quantity",
+            description = "Update quantity of a book in the shopping cart")
     public ShoppingCartDto updateCartItemQuantity(@PathVariable Long cartItemId,
                                             @RequestBody @Valid UpdateCartItemRequest request) {
         return shoppingCartService.updateCartItemQuantity(cartItemId, request);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Remove book", description = "Remove a book from the shopping cart")
     @DeleteMapping("cart-items/{cartItemId}")
     public void deleteItemFromCart(@PathVariable Long cartItemId) {
         shoppingCartService.deleteItemFromCart(cartItemId);

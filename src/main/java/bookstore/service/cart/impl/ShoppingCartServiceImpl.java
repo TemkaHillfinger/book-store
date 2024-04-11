@@ -13,30 +13,25 @@ import bookstore.model.User;
 import bookstore.repository.cart.ShoppingCartRepository;
 import bookstore.repository.cartitem.CartItemRepository;
 import bookstore.service.cart.ShoppingCartService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ShoppingCartServiceImpl implements ShoppingCartService {
-
-    private ShoppingCartRepository shoppingCartRepository;
-    private ShoppingCartMapper shoppingCartMapper;
-    private BookMapper bookMapper;
-    private CartItemRepository cartItemRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartMapper shoppingCartMapper;
+    private final BookMapper bookMapper;
+    private final CartItemRepository cartItemRepository;
 
     @Override
-    public ShoppingCartDto findUserShoppingCart(User user, Pageable pageable) {
-        Page<ShoppingCart> page = shoppingCartRepository.findByUserId(user.getId(), pageable);
-        ShoppingCart shoppingCart = page.getContent().get(0);
-        ShoppingCartDto dto = shoppingCartMapper.toDto(shoppingCart);
-        dto.setCartItems(shoppingCartMapper.mapCartItemsDto(shoppingCart.getCartItems()));
-        return dto;
+    public ShoppingCartDto findUserShoppingCart(Long userid) {
+        return shoppingCartMapper.toDto(shoppingCartRepository.findByUserId(userid));
     }
 
     @Override
+    @Transactional
     public ShoppingCartDto addBookToCart(AddToCartRequest request, User user) {
         Book book = bookMapper.bookFromId(request.getBookId());
         ShoppingCart shoppingCart = shoppingCartRepository.findByUser(user)
@@ -62,10 +57,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional
     public ShoppingCartDto updateCartItemQuantity(Long cartItemId, UpdateCartItemRequest request) {
         CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(
                 () -> new EntityNotFoundException("Can't find cart item with id: " + cartItemId));
-        Book book = cartItem.getBook();
         cartItem.setQuantity(request.getQuantity());
         cartItemRepository.save(cartItem);
         ShoppingCart shoppingCart = cartItem.getShoppingCart();
