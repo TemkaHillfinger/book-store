@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -25,6 +26,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE orders SET is_deleted = true WHERE id = ?")
 @SQLRestriction(value = "is_deleted = false")
 @Table(name = "orders")
+@NoArgsConstructor
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,10 +52,6 @@ public class Order {
         this.user = shoppingCart.getUser();
         this.status = Status.PENDING;
         this.orderDate = LocalDateTime.now();
-    }
-
-    public Order() {
-
     }
 
     @Getter

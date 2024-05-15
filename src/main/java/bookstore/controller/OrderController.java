@@ -2,6 +2,7 @@ package bookstore.controller;
 
 import bookstore.dto.order.OrderDto;
 import bookstore.dto.order.OrderItemDto;
+import bookstore.model.Order;
 import bookstore.service.order.OrderService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class OrderController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public OrderDto updateStatus(@PathVariable Long id, @RequestBody String status) {
+    public OrderDto updateStatus(@PathVariable Long id, @RequestBody Order.Status status) {
         return orderService.setOrderStatus(id, status);
     }
 
@@ -35,8 +36,7 @@ public class OrderController {
         return orderService.saveOrder(userDetails.getUsername(), shippingAddress);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/get-all")
+    @GetMapping
     public List<OrderDto> getAllOrders(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return orderService.getAllOrders(userDetails.getUsername());

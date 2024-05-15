@@ -37,12 +37,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public OrderDto setOrderStatus(Long id, String status) {
+    public OrderDto setOrderStatus(Long id, Order.Status status) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Can not find order by id:" + id));
+                        "Can not find order by id: " + id));
 
-        order.setStatus(Order.Status.valueOf(status));
+        order.setStatus(status);
         return orderMapper.toDto(orderRepository.save(order));
 
     }

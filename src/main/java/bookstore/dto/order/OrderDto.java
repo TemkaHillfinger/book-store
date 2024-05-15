@@ -11,5 +11,4 @@ public record OrderDto(Long id,
          LocalDateTime orderDate,
          BigDecimal total,
          Order.Status status){
-
 }
