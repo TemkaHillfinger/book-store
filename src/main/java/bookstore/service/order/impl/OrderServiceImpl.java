@@ -1,7 +1,9 @@
 package bookstore.service.order.impl;
 
+import bookstore.dto.order.CreateOrderRequestDto;
 import bookstore.dto.order.OrderDto;
 import bookstore.dto.order.OrderItemDto;
+import bookstore.dto.order.UpdateOrderDto;
 import bookstore.exeption.EntityNotFoundException;
 import bookstore.mapper.OrderItemMapper;
 import bookstore.mapper.OrderMapper;
@@ -19,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,31 +34,31 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
 
     @Override
-    public List<OrderDto> getAllOrders(String email) {
-        return orderMapper.toDtos(orderRepository.findAllByUserEmail(email));
+    public List<OrderDto> getAllOrders(String email, Pageable pageable) {
+        return orderMapper.toDtos(orderRepository.findAllByUserEmail(email, pageable));
     }
 
     @Transactional
     @Override
-    public OrderDto setOrderStatus(Long id, Order.Status status) {
+    public OrderDto setOrderStatus(Long id, UpdateOrderDto updateOrderDto) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Can not find order by id: " + id));
 
-        order.setStatus(status);
+        order.setStatus(updateOrderDto.status());
         return orderMapper.toDto(orderRepository.save(order));
 
     }
 
     @Transactional
     @Override
-    public OrderDto saveOrder(String email, String shippingAddress) {
+    public OrderDto saveOrder(String email, CreateOrderRequestDto requestDto) {
         ShoppingCart userShoppingCart = shoppingCartRepository.findByUserEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Can not find user's shopping cart. User email: " + email));
 
         Order userOrder = new Order(userShoppingCart);
-        userOrder.setShippingAddress(shippingAddress);
+        userOrder.setShippingAddress(requestDto.shippingAddress());
         userOrder.setTotal(userShoppingCart.getCartItems().stream()
                 .map(i -> i.getBook().getPrice())
                 .reduce(BigDecimal.ZERO, BigDecimal::add));

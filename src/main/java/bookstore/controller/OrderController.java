@@ -1,11 +1,15 @@
 package bookstore.controller;
 
+import bookstore.dto.order.CreateOrderRequestDto;
 import bookstore.dto.order.OrderDto;
 import bookstore.dto.order.OrderItemDto;
-import bookstore.model.Order;
+import bookstore.dto.order.UpdateOrderDto;
 import bookstore.service.order.OrderService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,29 +29,35 @@ public class OrderController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public OrderDto updateStatus(@PathVariable Long id, @RequestBody Order.Status status) {
-        return orderService.setOrderStatus(id, status);
+    public OrderDto updateStatus(@PathVariable Long id,
+                                 @RequestBody UpdateOrderDto updateOrderDto) {
+        return orderService.setOrderStatus(id, updateOrderDto);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
-    public OrderDto placeAnOrder(@RequestBody String shippingAddress,
+    public OrderDto placeAnOrder(@RequestBody CreateOrderRequestDto placeOrderDto,
                                  Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return orderService.saveOrder(userDetails.getUsername(), shippingAddress);
+        return orderService.saveOrder(userDetails.getUsername(), placeOrderDto);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
-    public List<OrderDto> getAllOrders(Authentication authentication) {
+    public List<OrderDto> getAllOrders(Authentication authentication,
+                                       @ParameterObject @PageableDefault Pageable pageable) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return orderService.getAllOrders(userDetails.getUsername());
+        return orderService.getAllOrders(userDetails.getUsername(),pageable);
     }
 
-    @GetMapping(value = "/{orderId}/items")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{orderId}/items")
     public List<OrderItemDto> getItemsFromOrder(@PathVariable Long orderId) {
         return orderService.getItems(orderId);
     }
 
-    @GetMapping(value = "/{orderId}/items/{itemId}")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{orderId}/items/{itemId}")
     public OrderItemDto getOneItemFromOrder(@PathVariable Long orderId, @PathVariable Long itemId) {
         return orderService.getById(orderId, itemId);
     }
