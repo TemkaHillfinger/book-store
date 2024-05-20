@@ -58,7 +58,7 @@ public class OrderController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{orderId}/items/{itemId}")
-    public OrderItemDto getOneItemFromOrder(@PathVariable Long orderId, @PathVariable Long itemId) {
-        return orderService.getById(orderId, itemId);
+    public OrderDto getOneItemFromOrder(@PathVariable Long itemId) {
+        return orderService.getById(itemId);
     }
 }

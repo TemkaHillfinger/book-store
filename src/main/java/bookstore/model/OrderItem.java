@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -20,6 +21,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE order_items SET is_delete = true WHERE id = ?")
 @SQLRestriction(value = "is_deleted = false")
 @Table(name = "order_items")
+@NoArgsConstructor
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,12 +39,4 @@ public class OrderItem {
     @Column(nullable = false)
     private boolean isDeleted = false;
 
-    public OrderItem() {
-    }
-
-    public OrderItem(CartItem cartItem) {
-        this.book = cartItem.getBook();
-        this.price = cartItem.getBook().getPrice();
-        this.quantity = cartItem.getQuantity();
-    }
 }

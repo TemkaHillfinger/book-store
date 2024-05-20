@@ -12,7 +12,6 @@ import bookstore.model.Order;
 import bookstore.model.OrderItem;
 import bookstore.model.ShoppingCart;
 import bookstore.repository.cart.ShoppingCartRepository;
-import bookstore.repository.order.OrderItemRepository;
 import bookstore.repository.order.OrderRepository;
 import bookstore.service.order.OrderService;
 import jakarta.transaction.Transactional;
@@ -31,7 +30,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final ShoppingCartRepository shoppingCartRepository;
     private final OrderItemMapper orderItemMapper;
-    private final OrderItemRepository orderItemRepository;
 
     @Override
     public List<OrderDto> getAllOrders(String email, Pageable pageable) {
@@ -59,16 +57,23 @@ public class OrderServiceImpl implements OrderService {
 
         Order userOrder = new Order(userShoppingCart);
         userOrder.setShippingAddress(requestDto.shippingAddress());
-        userOrder.setTotal(userShoppingCart.getCartItems().stream()
-                .map(i -> i.getBook().getPrice())
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        BigDecimal total = BigDecimal.ZERO;
         Set<OrderItem> orderItems = new HashSet<>();
 
         for (CartItem item : userShoppingCart.getCartItems()) {
-            OrderItem orderItem = new OrderItem(item);
+            OrderItem orderItem = new OrderItem();
+            orderItem.setBook(item.getBook());
+            orderItem.setPrice(item.getBook().getPrice());
+            orderItem.setQuantity(item.getQuantity());
+            orderItem.setOrder(userOrder);
             orderItems.add(orderItem);
+            total = total.add(item.getBook().getPrice()
+                    .multiply(BigDecimal.valueOf(item.getQuantity())));
         }
+        userOrder.setTotal(total);
         userOrder.setOrderItems(orderItems);
+        userShoppingCart.clearCartItems();
+
         return orderMapper.toDto(orderRepository.save(userOrder));
     }
 
@@ -76,14 +81,13 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderItemDto> getItems(Long id) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Can not find order by id:" + id));
-
         return orderItemMapper.toDtos(order.getOrderItems());
     }
 
     @Override
-    public OrderItemDto getById(Long orderId, Long itemId) {
-        return orderItemMapper.toDto(orderItemRepository.getById(orderId, itemId).orElseThrow(
-                () -> new EntityNotFoundException(
-                        "Can not find order by id:" + itemId)));
+    public OrderDto getById(Long itemId) {
+        Order order = orderRepository.findById(itemId).orElseThrow(
+                () -> new EntityNotFoundException("Can`t find order by id " + itemId));
+        return orderMapper.toDto(order);
     }
 }
